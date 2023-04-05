@@ -1,6 +1,7 @@
 // Manipulador de polinômios
 // Aluno: Hérick Vitor Vieira Bittencourt
 // Estrutura de dados 2023
+// TODO: remover pragma regions
 
 #include <iostream>
 #include <math.h>
