@@ -173,7 +173,7 @@ int tamMaxLista = 50;
 
 bool Menu(int id = 0){
     //int escolha;
-    if (id != 0) limparTela();
+    limparTela();
     switch (id){
         default: // Funções não implementadas
             return retornarComPausa(false);
@@ -230,13 +230,14 @@ bool Menu(int id = 0){
         case 20:{ // Inserir monomio
             if (tamListaPolinomios > 0){
                 Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
 
                 cout << "\nCriando monomio: " << endl;
-                int K = lerInt(0, 0,"Forneca um valor para a constante: ");
+                int K = lerInt(-1, -1,"Forneca um valor para a constante: ");
 
                 int letra = lerInt(0,1, "Tem X?\n1 - Sim\n0 - Nao\nOpcao escolhida: ");
 
-                int exp = lerInt(0, 0, "Escolha um valor para o expoente: ");
+                int exp = lerInt(-1, -1, "Escolha um valor para o expoente: ");
 
                 inserirMonomio(polinomioEscolhido, K, letra, exp);
                 return  retornarComPausa(false, "Monomio adicionado com sucesso");
@@ -246,8 +247,21 @@ bool Menu(int id = 0){
             break;
         }
 
-        case 30: // Remover por expoente
+        case 30:{ // Remover por expoente
+            if (tamListaPolinomios > 0){
+                cout << "Removendo monomio de polinomio a partir de expoente: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                int expEscolhido = lerInt(-1, -1, "Escolha um expoente para encontrar: ");
+
+                bool result = deletarExpoente(polinomioEscolhido, expEscolhido);
+                return retornarComPausa(false, (result) ? "O expoente fornecido foi encontrado e o valor foi deletado\n" : "Expoente nao encontrado no polinomio\n");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
             break;
+        }
 
         case 40: // Encontrar expoente em polinomio
             break;

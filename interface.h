@@ -12,7 +12,7 @@ using namespace std;
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-int lerInt(int min = 0, int max = 0, string msg = "Forneca um valor inteiro: "){
+int lerInt(int min = -1, int max = -1, string msg = "Forneca um valor inteiro: "){
     int valor;
     bool condicaoFalhou;
     do {
@@ -23,7 +23,7 @@ int lerInt(int min = 0, int max = 0, string msg = "Forneca um valor inteiro: "){
         condicaoFalhou = (valor < min || valor > max);
 
         // Sem requisito de espaço
-        if (min == max) condicaoFalhou = false;
+        if (min == -1 && max == -1) condicaoFalhou = false;
 
         // Falhou?
         if (!cin.good()) { 
@@ -45,20 +45,24 @@ void esperarInput(){
 
 bool retornarComPausa(bool valor, string msg = "Esta funcao nao esta implementada"){
     cout << msg << endl;
-    esperarInput();
+    //esperarInput();
+    // TODO: remover comentação p/ o esperarInput funcionar durante entrega
     return valor;
 }
 
+// Oferece uma lista para escolha de polinomios, sendo necessário a implementação
+// do comportamento em caso NULL para retornar ao menu toda vez que for chamado
 Lista* escolherPolinomio(Lista **listaPolinomios, int tamListaPolinomios){
-    cout << "Escolha um polinomio:" << endl;
+    cout << "Escolha um polinomio:\n0 = Voltar ao menu principal" << endl;
     for (int i = 0; i < tamListaPolinomios; i++){
         cout << "Polinomio " << i+1 << " = ";
         lerPolinomio(listaPolinomios[i]);
     }
 
     int escolha;
-    escolha = lerInt(1, tamListaPolinomios-1, "Polinomio escolhido: ") - 1;
-    return listaPolinomios[escolha];
+    escolha = lerInt(0, tamListaPolinomios, "Polinomio escolhido: ") - 1;
+    if (escolha != -1) return listaPolinomios[escolha];
+    else return NULL;
 }
 
 void limparTela(){
