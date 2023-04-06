@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include "parte1.h"
+#define UseCLS false // Impede o system('cls') p/ evitar bugs em terminais integrados do vscode
 
 using namespace std;
 
@@ -61,7 +62,8 @@ Lista* escolherPolinomio(Lista **listaPolinomios, int tamListaPolinomios){
 }
 
 void limparTela(){
-    system("cls");
+    if (UseCLS) system("cls");
+    else cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
 }
 
 #endif

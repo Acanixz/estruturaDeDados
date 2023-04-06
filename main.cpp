@@ -8,8 +8,8 @@
 #include <windows.h> // usado para pausas
 #include <string>
 #include "parte1.h"
-#define UseCLS false // Impede o system('cls') p/ evitar bugs em terminais integrados do vscode
-#define StopBeforeEnd true // system('pause') ao final do código
+#include "interface.h"
+#define pausarNoFinal true // system('pause') ao final do código
 using namespace std;
 
 #pragma region Declaracoes_Menu
@@ -19,55 +19,7 @@ int tamMaxLista = 50;
 #pragma endregion
 
 #pragma region Funcoes_Menu
-void limparTela(){
-    /* 
-        cls é definido pelo UseCLS pois no vscode o terminal integrado
-        possui bugs relacionados ao tentar limpa-lo, caso vá usar o EXE é
-        recomendado ativar o UseCLS para melhor legibilidade ao fazer a build
-    */
-    if (UseCLS) system("cls");
-    else cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-}
-
-int lerInt(string msg = "Opcao escolhida: "){
-    int temp;
-    bool firstTrigger = true;
-    do
-    {
-        if (!firstTrigger) {
-            cin.clear();
-            cin.ignore(256, '\n');
-            cout << "Valor invalido, tente novamente!" << endl;
-        } else firstTrigger = false;
-        cout << msg;
-        cin >> temp;
-    } while (!cin.good());
-    return temp;
-}
-
-bool RetornarMenu(string msg = "Esta funcao nao esta implementada, retornando ao menu principal em 2 segundos"){
-    limparTela();
-    cout << msg << endl;
-    Sleep(2000);
-    return false;
-}
-
-Lista* escolherPolinomio(){
-    cout << "ESCOLHA UM POLINOMIO:" << endl;
-    for (int i = 0; i < tamListaPolinomios; i++){
-        cout << "Polinomio " << i+1 << ": ";
-        lerPolinomio(listaPolinomios[i]);
-    }
-    int escolha = -1;
-    do
-    {
-        escolha = lerInt() - 1;
-    } while (escolha < 0 || escolha > tamListaPolinomios-1);
-
-    return listaPolinomios[escolha];
-}
-
-bool Menu(int Id = 0){
+/*bool Menu(int Id = 0){
     // Menu retorna um booleano p/ evitar stackoverflow devido recursão infinita sem retorno
     // Por ir e voltar uma opção
     // Humanamente é díficil chegar a esse ponto, mas nunca se sabe
@@ -217,11 +169,105 @@ bool Menu(int Id = 0){
 
     return false;
 }
-#pragma endregion
+#pragma endregion*/
+
+bool Menu(int id = 0){
+    //int escolha;
+    if (id != 0) limparTela();
+    switch (id){
+        default: // Funções não implementadas
+            return retornarComPausa(false);
+            break;
+
+        case 0: // Menu principal
+            cout << "Manipulador de polinomios\nEscrito por Herick Vitor Vieira Bittencourt\n" << endl;
+            cout << "1) Operacoes com a lista (TAD)" << endl;
+            cout << "2) Operacoes de polinomios" << endl;
+            cout << "3) Executar codigo exemplo (parte 1)" << endl;
+            cout << "4) Sair" << endl;
+            return Menu(lerInt(1, 4, "Opcao escolhida: ")); // Escolhe IDs de 1 - 4
+            break;
+
+        case 1: // Operações com a lista (TAD)
+            cout << "Operacoes com a lista (TAD):\n" << endl;
+            cout << "1) Nova lista (novo polinomio)" << endl;
+            cout << "2) Inserir monomio" << endl;
+            cout << "3) Remover por expoente" << endl;
+            cout << "4) Encontrar expoente em polinomio" << endl;
+            cout << "5) Imprimir lista" << endl;
+            cout << "6) Voltar ao menu principal" << endl;
+            return Menu(lerInt(1,6, "Opcao escolhida: ") * 10 ); // Escolhe IDs de 10 - 60
+            break;
+
+        case 2:
+            cout << "Operacoes de polinomios:\n" << endl;
+            cout << "1) - Somar polinomios" << endl;
+            cout << "2) - Subtrair polinomios" << endl;
+            cout << "3) - Multiplicar polinomio por escalar" << endl;
+            cout << "4) - Multiplicar polinomios" << endl;
+            cout << "5) - Determinar o valor numerico do polinomio" << endl;
+            cout << "6) - Voltar ao menu principal" << endl;
+            return Menu(lerInt(1,6, "Opcao escolhida: ") * 100); // Escolhe IDs 100 - 600
+            break;
+
+        case 3:
+            funcaoExemplo();
+            return retornarComPausa(true, "Fim da demonstracao");
+            break;
+
+        case 4:
+            return true;
+            break;
+
+
+        case 10: // Nova lista (novo polinomio)
+            if (tamListaPolinomios >= tamMaxLista) return retornarComPausa(false, "Limite de possiveis polinomios para armazenar excedido");
+                listaPolinomios[tamListaPolinomios] = new Lista;
+                inicializarLista(listaPolinomios[tamListaPolinomios++]);
+                return retornarComPausa(false,"Polinomio criado com sucesso");
+                break;
+
+        case 20:{ // Inserir monomio
+            if (tamListaPolinomios > 0){
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+
+                cout << "\nCriando monomio: " << endl;
+                int K = lerInt(0, 0,"Forneca um valor para a constante: ");
+
+                int letra = lerInt(0,1, "Tem X?\n1 - Sim\n0 - Nao\nOpcao escolhida: ");
+
+                int exp = lerInt(0, 0, "Escolha um valor para o expoente: ");
+
+                inserirMonomio(polinomioEscolhido, K, letra, exp);
+                return  retornarComPausa(false, "Monomio adicionado com sucesso");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
+            break;
+        }
+
+        case 30: // Remover por expoente
+            break;
+
+        case 40: // Encontrar expoente em polinomio
+            break;
+
+        case 50: // Imprimir lista
+            break;
+
+        case 60: // Retornar ao menu principal
+            return false;
+            break;
+
+        case 600: // Retornar ao menu principal
+            return false;
+            break;
+    }
+}
 
 int main(){
-    bool exitting = false;
-    do exitting = Menu(); while (exitting == false);
-    if (StopBeforeEnd) system("pause");
+    bool saindo;
+    do saindo = Menu(); while (saindo == false);
+    if (pausarNoFinal) system("pause");
     return 0;
 }
