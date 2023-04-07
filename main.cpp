@@ -262,14 +262,41 @@ bool Menu(int id = 0){
         }
 
         case 40: // Encontrar expoente em polinomio
+            if (tamListaPolinomios > 0){
+                cout << "Procurando em polinomio a partir de expoente: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                int expEscolhido = lerInt(-1, -1, "Escolha um expoente para encontrar: ");
+                No* result = acharExpoente(polinomioEscolhido, expEscolhido);
+
+                if (result != NULL) return retornarComPausa(false, "Encontrado o expoente " + to_string(expEscolhido) + " no polinomio");
+                return retornarComPausa(false , "O expoente " + to_string(expEscolhido) + " nao foi encontrado no polinomio");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
             break;
 
         case 50: // Imprimir lista
+            if (tamListaPolinomios > 0){
+                cout << "Imprimir lista: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                limparTela();
+                lerPolinomio(polinomioEscolhido);
+                return retornarComPausa(false, "");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
             break;
 
         case 60: // Retornar ao menu principal
             return false;
             break;
+
+
+        
 
         case 600: // Retornar ao menu principal
             return false;
