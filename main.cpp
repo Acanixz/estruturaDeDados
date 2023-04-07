@@ -2,6 +2,11 @@
 // Aluno: Hérick Vitor Vieira Bittencourt
 // Estrutura de dados 2023
 
+// Histórico de desenvolvimento disponivel em:
+// https://github.com/Acanixz/manipuladorPolinomios
+// (apenas final da parte 1 e parte 2 é completo) 
+// (publico apenas 1 semana após prazo de entrega)
+
 #include <iostream>
 #include <math.h>
 #include <windows.h> // usado para pausas
@@ -133,7 +138,7 @@ bool Menu(int id = 0){
                 if (polinomioEscolhido == NULL) return false;
 
                 limparTela();
-                lerPolinomio(polinomioEscolhido);
+                mostrarPolinomio(polinomioEscolhido);
                 return retornarComPausa(false, "");
             } else {
                 return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");

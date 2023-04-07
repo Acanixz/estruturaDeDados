@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include "parte1.h"
-#define UseCLS false // Impede o system('cls') p/ evitar bugs em terminais integrados do vscode
+#define UseSystem true // Impede o system("") p/ evitar bugs em terminais integrados do vscode
 
 using namespace std;
 
@@ -40,13 +40,13 @@ int lerInt(int min = -1, int max = -1, string msg = "Forneca um valor inteiro: "
 
 void esperarInput(){
     cout << endl;
+    if (!UseSystem) return;
     system("pause");
 }
 
 bool retornarComPausa(bool valor, string msg = "Esta funcao nao esta implementada"){
     cout << msg << endl;
-    //esperarInput();
-    // TODO: remover comentação p/ o esperarInput funcionar durante entrega
+    esperarInput();
     return valor;
 }
 
@@ -56,7 +56,7 @@ Lista* escolherPolinomio(Lista **listaPolinomios, int tamListaPolinomios){
     cout << "Escolha um polinomio:\n0 = Voltar ao menu principal" << endl;
     for (int i = 0; i < tamListaPolinomios; i++){
         cout << "Polinomio " << i+1 << " = ";
-        lerPolinomio(listaPolinomios[i]);
+        mostrarPolinomio(listaPolinomios[i]);
     }
 
     int escolha;
@@ -65,6 +65,7 @@ Lista* escolherPolinomio(Lista **listaPolinomios, int tamListaPolinomios){
     else return NULL;
 }
 
+// Adiciona um polinomio na lista de polinomios, utilizado nas operações que resultam em um polinomio novo
 bool adicionarPolinomio(Lista *polinomio, Lista **listaPolinomios, int &tamListaPolinomios, int limite){
     if (tamListaPolinomios < limite-1){
         listaPolinomios[tamListaPolinomios++] = polinomio;
@@ -75,7 +76,7 @@ bool adicionarPolinomio(Lista *polinomio, Lista **listaPolinomios, int &tamLista
 }
 
 void limparTela(){
-    if (UseCLS) system("cls");
+    if (UseSystem) system("cls");
     else cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
 }
 
