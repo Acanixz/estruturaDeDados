@@ -11,7 +11,7 @@ using namespace std;
 #ifndef PARTE1_H
 #define PARTE1_H
 
-#pragma region Structs
+// ---------- Structs
 struct No{ // Monômio
     int K; // Constante K
     int exp; // Expoente
@@ -22,9 +22,8 @@ struct No{ // Monômio
 struct Lista{ // Polinomio
     No *start, *end;
 };
-#pragma endregion
 
-#pragma region Declaracoes_Polinomios
+// ---------- Declaracoes_Polinomios
 // Inicializa a lista, setando os ponteros pra NULL
 void inicializarLista(Lista *lista){
     lista->start = NULL;
@@ -33,6 +32,7 @@ void inicializarLista(Lista *lista){
 
 // Mostra o polinômio na tela
 // Utilizando uma condição ternária absurdamente longa
+// TODO: TROCAR "lerPolinomio" para "mostrarPolinomio"
 void lerPolinomio(Lista *lista){
     No *aux = lista->start;
     bool primeiroValor = true;
@@ -272,8 +272,6 @@ int determinarValor(Lista *lista, int valorX){
 
     return resultado;
 }
-
-#pragma endregion
 
 // Função utilizada para demonstrar o uso de todas as funções desta biblioteca
 void funcaoExemplo(){

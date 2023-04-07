@@ -65,6 +65,15 @@ Lista* escolherPolinomio(Lista **listaPolinomios, int tamListaPolinomios){
     else return NULL;
 }
 
+bool adicionarPolinomio(Lista *polinomio, Lista **listaPolinomios, int &tamListaPolinomios, int limite){
+    if (tamListaPolinomios < limite-1){
+        listaPolinomios[tamListaPolinomios++] = polinomio;
+        return false;
+    } else {
+        return retornarComPausa(false, "Nao foi possivel adicionar o polinomio a lista pois a mesma esta cheia!");
+    }
+}
+
 void limparTela(){
     if (UseCLS) system("cls");
     else cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
