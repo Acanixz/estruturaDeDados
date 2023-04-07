@@ -235,11 +235,9 @@ bool Menu(int id = 0){
                 cout << "\nCriando monomio: " << endl;
                 int K = lerInt(-1, -1,"Forneca um valor para a constante: ");
 
-                int letra = lerInt(0,1, "Tem X?\n1 - Sim\n0 - Nao\nOpcao escolhida: ");
-
                 int exp = lerInt(-1, -1, "Escolha um valor para o expoente: ");
 
-                inserirMonomio(polinomioEscolhido, K, letra, exp);
+                inserirMonomio(polinomioEscolhido, K, exp);
                 return  retornarComPausa(false, "Monomio adicionado com sucesso");
             } else {
                 return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");

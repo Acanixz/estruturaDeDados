@@ -14,7 +14,6 @@ using namespace std;
 #pragma region Structs
 struct No{ // Monômio
     int K; // Constante K
-    bool letra; // Tem X?
     int exp; // Expoente
     No* frontElo; // Próximo monômio ou NULL
     No* backElo; // Monômio anterior ou NULL
@@ -46,9 +45,9 @@ void lerPolinomio(Lista *lista){
 
         cout << ((!primeiroValor && aux->K > 0) ? "+" : "") // simbolo + é renderizado caso não seja o primeiro valor e a constante seja positivo
         
-        << (((!aux->letra && aux->K != 0) || (aux->letra && (aux->K < -1 || aux->K > 1))) ? to_string(aux->K) : "") // constante é renderizada caso (não haja base e o expoente seja diferente de zero) OU (haja base e a constante seja menor que -1 ou maior que 1)
+        << ((aux->K < -1 || aux->K > 1) ? to_string(aux->K) : "") // constante é renderizada caso (não haja base e o expoente seja diferente de zero) OU (haja base e a constante seja menor que -1 ou maior que 1)
         
-        << ((aux->letra && aux->K != 0) ? "X" : "") // se tiver uma base e o constante for diferente de zero, X é renderizado
+        << ((aux->exp != 0) ? "X" : "") // se tiver uma base e o constante for diferente de zero, X é renderizado
         
         << (((aux->exp < 0 || aux->exp > 1) && aux->K != 0) ? "^" + std::to_string(aux->exp) : "") // se (o expoente for maior que 1 ou menor que zero) e o constante é diferente de zero, o simbolo ^ é renderizado junto ao expoente
         
@@ -74,40 +73,27 @@ void lerPolinomio(Lista *lista){
 }
 
 // Procura o primeiro valor com o mesmo expoente (e opcionalmente mesma letra), retornando o alvo ou NULL
-No* acharExpoente(Lista *lista, int exp, int mesmaLetra = -1){
-    // O parametro padrão mesmaLetra pode ter 3 estados e afeta diretamente a pesquisa
-    // -1 = Não configurado, a pesquisa normal para se achar o mesmo expoente, independente do estado da letra
-    // 0 = A pesquisa apenas para se achar o mesmo expoente e não houver variavel X
-    // 1 = A pesquisa apenas para se achar o mesmo expoente e HOUVER variavel X
+No* acharExpoente(Lista *lista, int exp){
     if (lista->start == NULL) return NULL;
     No *aux = lista->start;
-    if (mesmaLetra == -1){
-        while (aux != NULL && exp != aux->exp)
-        {
-            aux = aux->frontElo;
-        }
-    } else {
-        while ((aux != NULL) && (exp != aux->exp || aux->letra != static_cast<bool>(mesmaLetra)))
-        // Para a condição funcionar foi necessário converter mesmaLetra p/ booleano usando static_cast
-        {
-            aux = aux->frontElo;
-        }
+    while (aux != NULL && exp != aux->exp)
+    {
+        aux = aux->frontElo;
     }
     return aux;
 }
 
 // Insere o monômio seguindo ordem de expoênte
-bool inserirMonomio(Lista *lista, int K, bool letra = false, int exp = 0){
+bool inserirMonomio(Lista *lista, int K, int exp = 0){
     if( lista == NULL || K == 0) return false;
     No *monomio = new No;
     monomio->K = K;
-    monomio->letra = letra;
-    monomio->exp = (letra && exp == 0) ? 1 : (!letra && exp == 1) ? 0 : exp;
+    monomio->exp = exp;
     monomio->backElo = NULL;
     monomio->frontElo = NULL;
 
     // Se já houver um valor com mesmo expoente, soma automatica
-    No *soma = acharExpoente(lista, exp, letra);
+    No *soma = acharExpoente(lista, exp);
     if (soma != NULL){
         soma->K += K;
         return true;
@@ -121,13 +107,14 @@ bool inserirMonomio(Lista *lista, int K, bool letra = false, int exp = 0){
     }
 
     // Inserir no inicio da lista
+    // TODO: REFAZER COMENTÁRIO
     // O monomio novo possui base e possui um expoente maior ou igual que o atual, ele vem primeiro
-    if (exp > lista->start->exp || (exp == lista->start->exp && letra)){
+    if (exp > lista->start->exp){
         monomio->frontElo = lista->start;
         lista->start->backElo = monomio;
         lista->start = monomio;
         return true;
-    } else if (exp == lista->start->exp){
+    } /*else if (exp == lista->start->exp){
         // monomio novo tem mesmo exp, mas não possui base, ele vem depois
         if (lista->start->frontElo) {
             lista->start->frontElo->backElo = monomio;
@@ -136,10 +123,10 @@ bool inserirMonomio(Lista *lista, int K, bool letra = false, int exp = 0){
         monomio->backElo = lista->start;
         lista->start->frontElo = monomio;
         return true;
-    }
+    }*/
 
     // Inserir no final da lista
-    if( exp <= lista->end->exp ){
+    if( exp <= lista->end->exp){
         lista->end->frontElo = monomio;
         monomio->backElo = lista->end;
         lista->end = monomio;
@@ -151,33 +138,20 @@ bool inserirMonomio(Lista *lista, int K, bool letra = false, int exp = 0){
     while( aux->exp > exp && aux->frontElo->exp > exp )
         aux = aux->frontElo;
 
-    if (!letra){
-        while (aux->exp >= exp && aux->frontElo != NULL){
-            aux = aux->frontElo;
-        }
-
-        aux->backElo->frontElo = monomio;
-        monomio->backElo = aux->backElo;
-        monomio->frontElo = aux;
-        aux->backElo = monomio;
-    } else {
-        aux->frontElo->backElo = monomio;
-        monomio->frontElo = aux->frontElo;
-        monomio->backElo = aux;
-        aux->frontElo = monomio;
-    }
-    
+    aux->frontElo->backElo = monomio;
+    monomio->frontElo = aux->frontElo;
+    monomio->backElo = aux;
+    aux->frontElo = monomio;
     
     return true;
 }
 
 // Insere o monômio no final
-bool inserirMonomioFinal(Lista *lista, int K, bool letra = false, int exp = 0){
+bool inserirMonomioFinal(Lista *lista, int K, int exp = 0){
     if( lista == NULL || K == 0) return false;
     No *novo = new No;
     novo->exp = exp;
     novo->K = K;
-    novo->letra = letra;
     novo->backElo = NULL;
     novo->frontElo = NULL;
 
@@ -220,13 +194,13 @@ Lista *somarPolinomios(Lista *lista1,Lista *lista2){
     inicializarLista(soma);
     No *aux = lista1->start;
     while (aux != NULL){
-        inserirMonomio(soma, aux->K, aux->letra, aux->exp);
+        inserirMonomio(soma, aux->K, aux->exp);
         aux = aux->frontElo;
     }
 
     aux = lista2->start;
     while (aux != NULL){
-        inserirMonomio(soma, aux->K, aux->letra, aux->exp);
+        inserirMonomio(soma, aux->K, aux->exp);
         aux = aux->frontElo;
     }
 
@@ -239,13 +213,13 @@ Lista *subtrairPolinomios(Lista *lista1,Lista *lista2){
     inicializarLista(soma);
     No *aux = lista1->start;
     while (aux != NULL){
-        inserirMonomio(soma, aux->K, aux->letra, aux->exp);
+        inserirMonomio(soma, aux->K, aux->exp);
         aux = aux->frontElo;
     }
 
     aux = lista2->start;
     while (aux != NULL){
-        inserirMonomio(soma, -aux->K, aux->letra, aux->exp);
+        inserirMonomio(soma, -aux->K, aux->exp);
         aux = aux->frontElo;
     }
 
@@ -258,7 +232,7 @@ Lista *multiplicacaoEscalar(Lista *lista, int valor){
     inicializarLista(resultado);
     No *aux = lista->start;
     while (aux != NULL){
-        inserirMonomioFinal(resultado, aux->K * valor, aux->letra, aux->exp);
+        inserirMonomioFinal(resultado, aux->K * valor, aux->exp);
         aux = aux->frontElo;
     }
     return resultado;
@@ -272,7 +246,7 @@ Lista *multiplicarPolinomios(Lista *lista1,Lista *lista2){
     while (aux != NULL){
         No *aux2 = lista2->start;
         while (aux2 != NULL){
-            inserirMonomio(multiplicada, aux->K * aux2->K, (aux->letra || aux2->letra), aux->exp + aux2->exp);
+            inserirMonomio(multiplicada, aux->K * aux2->K, aux->exp + aux2->exp);
             aux2 = aux2->frontElo;
         }
         aux = aux->frontElo;
@@ -286,16 +260,12 @@ int determinarValor(Lista *lista, int valorX){
     int resultado = 0;
 
     No *aux = lista->start;
-    while (aux != NULL){
-        if (aux->letra){ // Se tiver base, constante é multiplicada por valorX na potencia de (aux->exp)
-            resultado += (aux->K * (pow(valorX, aux->exp)));
-        } else { // Se não tiver base, constante na potência de (aux->exp)
-            if (aux->exp != 0){
-                resultado += (pow(aux->K, aux->exp));
+    while (aux != NULL){ //constante na potência de (aux->exp)
+        if (aux->exp != 0){
+            resultado += (pow(aux->K, aux->exp));
             } else {
                 resultado += aux->K;
             }
-        }
 
         aux = aux->frontElo;
     }
@@ -317,11 +287,11 @@ void funcaoExemplo(){
     inicializarLista(listaTemp3);
     inicializarLista(resultado1);
 
-    inserirMonomio(listaTemp1, 4, true, 2); // 4X^2 (Inserção conforme expoente)
+    inserirMonomio(listaTemp1, 4, 2); // 4X^2 (Inserção conforme expoente)
     lerPolinomio(listaTemp1);
-    inserirMonomioFinal(listaTemp1, 2, true, 4); // 2X^4 (Inserção no final da lista)
+    inserirMonomioFinal(listaTemp1, 2, 4); // 2X^4 (Inserção no final da lista)
     lerPolinomio(listaTemp1);
-    inserirMonomio(listaTemp1, 3, true, 3); // 3X^3 (Inserção conforme expoente, meio da lista)
+    inserirMonomio(listaTemp1, 3, 3); // 3X^3 (Inserção conforme expoente, meio da lista)
     lerPolinomio(listaTemp1);
     cout << "\n\n";
     
@@ -333,24 +303,18 @@ void funcaoExemplo(){
     lerPolinomio(listaTemp1);
     deletarExpoente(listaTemp1, 4);
     lerPolinomio(listaTemp1);
-
-
-    cout << "\n[DEMO Adicional] Pesquisa por expoente com opcional de possuir base ou nao" << endl;
-    lerPolinomio(listaTemp1);
-    cout << (acharExpoente(listaTemp1, 2, 1) ? "Expoente 2 (com base) foi encontrado no polinomio" : "Expoente 2 (com base) nao encontrado") << endl;
-    cout << (acharExpoente(listaTemp1, 2, 0) ? "Expoente 2 (sem base) foi encontrado no polinomio" : "Expoente 2 (sem base) nao encontrado") << endl;
     cout << "\n\n";
 
     cout << "[DEMO] Soma de dois polinomios" << endl;
-    inserirMonomio(listaTemp2, -7, true, 3); // -7X^3
-    inserirMonomio(listaTemp2, -4, true, 2); // -4X^2
-    inserirMonomio(listaTemp2, 10, true); // 10X
+    inserirMonomio(listaTemp2, -7, 3); // -7X^3
+    inserirMonomio(listaTemp2, -4, 2); // -4X^2
+    inserirMonomio(listaTemp2, 10, 1); // 10X
     inserirMonomio(listaTemp2, 20); // 20
     lerPolinomio(listaTemp2);
 
-    inserirMonomio(listaTemp3, 2, true, 2); // 2X^2
-    inserirMonomio(listaTemp3, -5, true); // -5X
-    inserirMonomio(listaTemp3, 15, true, 5); // 15X^5
+    inserirMonomio(listaTemp3, 2, 2); // 2X^2
+    inserirMonomio(listaTemp3, -5, 1); // -5X
+    inserirMonomio(listaTemp3, 15, 5); // 15X^5
     inserirMonomio(listaTemp3, -10); // -10
     lerPolinomio(listaTemp3);
 
