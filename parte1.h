@@ -262,7 +262,7 @@ int determinarValor(Lista *lista, int valorX){
     No *aux = lista->start;
     while (aux != NULL){ //constante na potência de (aux->exp)
         if (aux->exp != 0){
-            resultado += (pow(aux->K, aux->exp));
+            resultado += aux->K * (pow(valorX, aux->exp));
             } else {
                 resultado += aux->K;
             }
