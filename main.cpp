@@ -1,227 +1,238 @@
 // Manipulador de polinômios
 // Aluno: Hérick Vitor Vieira Bittencourt
 // Estrutura de dados 2023
-// TODO: remover pragma regions
+
+// Histórico de desenvolvimento disponivel em:
+// https://github.com/Acanixz/manipuladorPolinomios
+// (apenas final da parte 1 e parte 2 é completo) 
+// (publico apenas 1 semana após prazo de entrega)
 
 #include <iostream>
 #include <math.h>
 #include <windows.h> // usado para pausas
 #include <string>
+
 #include "parte1.h"
-#define UseCLS false // Impede o system('cls') p/ evitar bugs em terminais integrados do vscode
-#define StopBeforeEnd true // system('pause') ao final do código
+#include "interface.h"
+#define pausarNoFinal true // system('pause') ao final do código
 using namespace std;
 
-#pragma region Declaracoes_Menu
+// ---------- Declaracoes_Menu
 Lista **listaPolinomios = new Lista*[50];
 int tamListaPolinomios = 0;
 int tamMaxLista = 50;
-#pragma endregion
 
-#pragma region Funcoes_Menu
-void limparTela(){
-    /* 
-        cls é definido pelo UseCLS pois no vscode o terminal integrado
-        possui bugs relacionados ao tentar limpa-lo, caso vá usar o EXE é
-        recomendado ativar o UseCLS para melhor legibilidade ao fazer a build
-    */
-    if (UseCLS) system("cls");
-    else cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-}
-
-int lerInt(string msg = "Opcao escolhida: "){
-    int temp;
-    bool firstTrigger = true;
-    do
-    {
-        if (!firstTrigger) {
-            cin.clear();
-            cin.ignore(256, '\n');
-            cout << "Valor invalido, tente novamente!" << endl;
-        } else firstTrigger = false;
-        cout << msg;
-        cin >> temp;
-    } while (!cin.good());
-    return temp;
-}
-
-bool RetornarMenu(string msg = "Esta funcao nao esta implementada, retornando ao menu principal em 2 segundos"){
+// ---------- Funcoes_Menu
+bool Menu(int id = 0){
     limparTela();
-    cout << msg << endl;
-    Sleep(2000);
-    return false;
-}
+    switch (id){
+        default: // Funções não implementadas
+            return retornarComPausa(false);
+            break;
 
-Lista* escolherPolinomio(){
-    cout << "ESCOLHA UM POLINOMIO:" << endl;
-    for (int i = 0; i < tamListaPolinomios; i++){
-        cout << "Polinomio " << i+1 << ": ";
-        lerPolinomio(listaPolinomios[i]);
-    }
-    int escolha = -1;
-    do
-    {
-        escolha = lerInt() - 1;
-    } while (escolha < 0 || escolha > tamListaPolinomios-1);
+        case 0: // Menu principal
+            cout << "Manipulador de polinomios\nEscrito por Herick Vitor Vieira Bittencourt\n" << endl;
+            cout << "1) Operacoes com a lista (TAD)" << endl;
+            cout << "2) Operacoes de polinomios" << endl;
+            cout << "3) Executar codigo exemplo (parte 1)" << endl;
+            cout << "4) Sair" << endl;
+            return Menu(lerInt(1, 4, "Opcao escolhida: ")); // Escolhe IDs de 1 - 4
+            break;
 
-    return listaPolinomios[escolha];
-}
+        case 1: // Submenu 1 - Operações com a lista (TAD)
+            cout << "Operacoes com a lista (TAD):\n" << endl;
+            cout << "1) Nova lista (novo polinomio)" << endl;
+            cout << "2) Inserir monomio" << endl;
+            cout << "3) Remover por expoente" << endl;
+            cout << "4) Encontrar expoente em polinomio" << endl;
+            cout << "5) Imprimir lista" << endl;
+            cout << "6) Voltar ao menu principal" << endl;
+            return Menu(lerInt(1,6, "Opcao escolhida: ") * 10 ); // Escolhe IDs de 10 - 60
+            break;
 
-bool Menu(int Id = 0){
-    // Menu retorna um booleano p/ evitar stackoverflow devido recursão infinita sem retorno
-    // Por ir e voltar uma opção
-    // Humanamente é díficil chegar a esse ponto, mas nunca se sabe
-    limparTela();
-    int escolha = -1;
-    switch (Id)
-    {
-    
-    // FUNÇÃO INEXISTENTE
-    default:
-        return RetornarMenu();
-    break;
-    
-    // MENU PRINCIPAL
-    case 0:
-        cout << "Manipulador de polinomios\nEscrito por Herick Vitor Vieira Bittencourt" << endl;
-        cout << "Escolha uma opcao:" << endl;
-        cout << "1) Operacoes com a lista (TAD)" << endl;
-        cout << "2) Operacoes de polinomios" << endl;
-        cout << "3) Executar codigo exemplo (parte 1)" << endl;
-        cout << "4) Sair" << endl;
-        do
-        {
-            escolha = lerInt();
-        } while (escolha < 1 || escolha > 4);
+        case 2: // Submenu 2 - Operaçoes de polinomios
+            cout << "Operacoes de polinomios:\n" << endl;
+            cout << "1) - Somar polinomios" << endl;
+            cout << "2) - Subtrair polinomios" << endl;
+            cout << "3) - Multiplicar polinomio por escalar" << endl;
+            cout << "4) - Multiplicar polinomios" << endl;
+            cout << "5) - Determinar o valor numerico do polinomio" << endl;
+            cout << "6) - Voltar ao menu principal" << endl;
+            return Menu(lerInt(1,6, "Opcao escolhida: ") * 100); // Escolhe IDs 100 - 600
+            break;
+
+        case 3:
+            funcaoExemplo();
+            return retornarComPausa(true, "Fim da demonstracao");
+            break;
+
+        case 4:
+            return true;
+            break;
+
+
+        // Submenu 1 - Operações com a lista (TAD)
+        case 10:{ // Nova lista (novo polinomio)
+            if (tamListaPolinomios >= tamMaxLista) return retornarComPausa(false, "Limite de possiveis polinomios para armazenar excedido");
+                listaPolinomios[tamListaPolinomios] = new Lista;
+                inicializarLista(listaPolinomios[tamListaPolinomios++]);
+                return retornarComPausa(false,"Polinomio criado com sucesso");
+            break;
+        }
+
+        case 20:{ // Inserir monomio
+            if (tamListaPolinomios > 0){
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                cout << "\nCriando monomio: " << endl;
+                int K = lerInt(-1, -1,"Forneca um valor para a constante: ");
+
+                int exp = lerInt(-1, -1, "Escolha um valor para o expoente: ");
+
+                inserirMonomio(polinomioEscolhido, K, exp);
+                return  retornarComPausa(false, "Monomio adicionado com sucesso");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
+            break;
+        }
+
+        case 30:{ // Remover por expoente
+            if (tamListaPolinomios > 0){
+                cout << "Removendo monomio de polinomio a partir de expoente: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                int expEscolhido = lerInt(-1, -1, "Escolha um expoente para encontrar: ");
+
+                bool result = deletarExpoente(polinomioEscolhido, expEscolhido);
+                return retornarComPausa(false, (result) ? "O expoente fornecido foi encontrado e o valor foi deletado\n" : "Expoente nao encontrado no polinomio\n");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
+            break;
+        }
+
+        case 40:{ // Encontrar expoente em polinomio
+            if (tamListaPolinomios > 0){
+                cout << "Procurando em polinomio a partir de expoente: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                int expEscolhido = lerInt(-1, -1, "Escolha um expoente para encontrar: ");
+                No* result = acharExpoente(polinomioEscolhido, expEscolhido);
+
+                if (result != NULL) return retornarComPausa(false, "Encontrado o expoente " + to_string(expEscolhido) + " no polinomio");
+                return retornarComPausa(false , "O expoente " + to_string(expEscolhido) + " nao foi encontrado no polinomio");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
+            break;
+        }
+
+        case 50:{ // Imprimir lista
+            if (tamListaPolinomios > 0){
+                cout << "Imprimir lista: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                limparTela();
+                mostrarPolinomio(polinomioEscolhido);
+                return retornarComPausa(false, "");
+            } else {
+                return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            }
+            break;
+        }
+
+        case 60: // Retornar ao menu principal
+            return false;
+            break;
+
+
+        // Submenu 2 - Operações de polinomios
+        case 100:{ // Somar polinomios
+            if (tamListaPolinomios >= 2){
+                cout << "Soma de polinomios: " << endl;
+                Lista* polinomioEscolhido1 = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                cout << endl;
+                Lista* polinomioEscolhido2 = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido1 == NULL || polinomioEscolhido2 == NULL) return false;
+
+                adicionarPolinomio(somarPolinomios(polinomioEscolhido1, polinomioEscolhido2), listaPolinomios, tamListaPolinomios, tamMaxLista);
+                return retornarComPausa(false, "Operacao concluida");
+            } else return retornarComPausa(false, "Nao ha polinomios o suficiente para esta operacao | Minimo: 2 / Armazenado: " + to_string(tamListaPolinomios));
+            break;
+        }
+
+        case 200:{ // Subtrair polinomios
+            if (tamListaPolinomios >= 2){
+                cout << "Subtracao de polinomios: " << endl;
+                Lista* polinomioEscolhido1 = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                cout << endl;
+                Lista* polinomioEscolhido2 = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido1 == NULL || polinomioEscolhido2 == NULL) return false;
+
+                adicionarPolinomio(subtrairPolinomios(polinomioEscolhido1, polinomioEscolhido2), listaPolinomios, tamListaPolinomios, tamMaxLista);
+                return retornarComPausa(false, "Operacao concluida");
+            } else return retornarComPausa(false, "Nao ha polinomios o suficiente para esta operacao | Minimo: 2 / Armazenado: " + to_string(tamListaPolinomios));
+            break;
+        }
+
+        case 300:{ // Multiplicar polinomio por escalar
+            if (tamListaPolinomios > 0){
+                cout << "Multiplicacao de polinomio por escalar: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
+
+                int escalar = lerInt(-1, -1);
+
+                adicionarPolinomio(multiplicacaoEscalar(polinomioEscolhido, escalar), listaPolinomios, tamListaPolinomios, tamMaxLista);
+                return retornarComPausa(false, "Operacao concluida");
+            } else return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            break;
+        }
+
+        case 400:{ // Multiplicar polinomios
+            if (tamListaPolinomios >= 2){
+                cout << "Multiplicacao de polinomios: " << endl;
+                Lista* polinomioEscolhido1 = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                cout << endl;
+                Lista* polinomioEscolhido2 = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido1 == NULL || polinomioEscolhido2 == NULL) return false;
+
+                adicionarPolinomio(multiplicarPolinomios(polinomioEscolhido1, polinomioEscolhido2), listaPolinomios, tamListaPolinomios, tamMaxLista);
+                return retornarComPausa(false, "Operacao concluida");
+            } else return retornarComPausa(false, "Nao ha polinomios o suficiente para esta operacao | Minimo: 2 / Armazenado: " + to_string(tamListaPolinomios));
+            break;
+        }
         
-        return Menu(escolha);
-        break;
-    case 1:
-        cout << "OPERACOES COM A LISTA:" << endl;
-        cout << "1) Nova lista (novo polinomio)" << endl;
-        cout << "2) Inserir monomio" << endl;
-        cout << "3) Remover por expoente" << endl;
-        cout << "4) Encontrar expoente em polinomio" << endl;
-        cout << "5) Imprimir lista" << endl;
-        cout << "6) Voltar ao menu principal" << endl;
+        case 500:{ // Determinar o valor numerico
+            if (tamListaPolinomios > 0){
+                cout << "Determinar valor numerico do polinomio: " << endl;
+                Lista* polinomioEscolhido = escolherPolinomio(listaPolinomios, tamListaPolinomios);
+                if (polinomioEscolhido == NULL) return false;
 
-        do
-        {
-            escolha = lerInt();
-        } while (escolha < 1 || escolha > 6);
+                int valorX = lerInt(-1, -1, "Forneca um valor para X: ");
 
-        return Menu(escolha * 10); //10-60
-        break;
+                int result = determinarValor(polinomioEscolhido, valorX);
 
-    case 2:
-        cout << "OPERACOES DE POLINOMIOS:" << endl;
-        cout << "1) - Somar polinomios" << endl;
-        cout << "2) - Subtrair polinomios" << endl;
-        cout << "3) - Multiplicar polinomio por escalar" << endl;
-        cout << "4) - Multiplicar polinomios" << endl;
-        cout << "5) - Determinar o valor numerico do polinomio" << endl;
-        cout << "6) - Voltar ao menu principal" << endl;
-
-        do
-        {
-            escolha = lerInt();
-        } while (escolha < 1 || escolha > 6);
-
-        return Menu(escolha * 100); //100-600
-        break;
-    case 3:
-    {
-        funcaoExemplo();
-        return true;
-        break;
-    }
-
-    case 4:
-        return true;
-        break;
-
-
-    // OPERAÇÕES COM A LISTA (TAD)
-    case 10: // CRIAR POLINOMIO
-        if (tamListaPolinomios >= tamMaxLista) return RetornarMenu("Limite de possiveis polinomios para armazenar excedido");
-        listaPolinomios[tamListaPolinomios] = new Lista;
-        inicializarLista(listaPolinomios[tamListaPolinomios++]);
-        return RetornarMenu("Polinomio criado com sucesso");
-        break;
-
-    case 20: // ADICIONAR MONOMIO
-        if (tamListaPolinomios > 0){
-            Lista* polinomioEscolhido = escolherPolinomio();
-            bool firstTry = true;
-
-            cout << "Criando monomio: " << endl;
-            int K = lerInt("Escolha um valor para a constante: ");
-
-            int letra = -1;
-            do {
-                cout << (!firstTry ? "Valor invalido, tente novamente!" : "");
-                firstTry = false;
-                cout << "Tem X?" << endl;
-                cout << "1 - Sim\n0 - Nao" << endl;
-                cout << "Opcao escolhida: ";
-                cin >> letra;
-            } while (letra < 0 || letra > 1);
-
-            int exp = lerInt("Escolha um valor para o expoente: ");
-
-            inserirMonomio(polinomioEscolhido, K, letra, exp);
-            return RetornarMenu("Monomio adicionado com sucesso");
-        } else {
-            return RetornarMenu("Nao ha polinomios na memoria, crie um primeiro!");
+                cout << "f(" << valorX << ") = " << result << endl;
+                return retornarComPausa(false, "Operacao concluida");
+            } else return retornarComPausa(false, "Nao ha polinomios na memoria, crie um primeiro!");
+            break;
         }
-        break;
 
-    case 30: // Remover por expoente
-    {
-        if (tamListaPolinomios > 0){
-            cout << "Removendo monomio de polinomio a partir de expoente: " << endl;
-            Lista* polinomioEscolhido = escolherPolinomio();
-            int expEscolhido = lerInt("Escolha um expoente para encontrar: ");
-            bool result = deletarExpoente(polinomioEscolhido, expEscolhido);
-            return RetornarMenu((result) ? "O expoente fornecido foi encontrado e o valor foi deletado\n" : "Expoente nao encontrado no polinomio\n");
-        } else {
-            return RetornarMenu("Nao ha polinomios na memoria, crie um primeiro!");
-        }
-        break;
+        case 600: // Retornar ao menu principal
+            return false;
+            break;
     }
-
-    case 40: // Encontrar expoente em polinomio
-        if (tamListaPolinomios > 0){
-            cout << "Procurando em polinomio a partir de expoente: " << endl;
-            Lista* polinomioEscolhido = escolherPolinomio();
-            int expEscolhido = lerInt("Escolha um expoente para encontrar");
-            No* result = acharExpoente(polinomioEscolhido, expEscolhido);
-            //return RetornarMenu((result != NULL) ? );
-        } else {
-            return RetornarMenu("Nao ha polinomios na memoria, crie um primeiro!");
-        }
-        break;
-
-    case 50: // Imprimir lista
-        break;
-
-    case 60: // Voltar ao menu principal (REMOVER)
-        break;
-
-
-    // OPERACOES COM POLINOMIOS
-    case 600: // Voltar ao menu principal (REMOVER)
-        break;
-    
-    }
-
-    return false;
 }
-#pragma endregion
 
 int main(){
-    bool exitting = false;
-    do exitting = Menu(); while (exitting == false);
-    if (StopBeforeEnd) system("pause");
+    bool saindo;
+    do saindo = Menu(); while (saindo == false);
+    if (pausarNoFinal) system("pause");
     return 0;
 }
