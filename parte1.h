@@ -39,17 +39,20 @@ void mostrarPolinomio(Lista *lista){
         // simbolo + é renderizado caso não seja o primeiro valor e a constante seja positivo
         cout << ((!primeiroValor && aux->K > 0) ? "+" : "")
         
+        // simbolo - é renderizado caso -X, já que a constante não renderiza no caso de K < -1 e exp != 0, levando a não aparecer o - 
+        << ((aux->exp != 0 && aux->K == -1) ? "-" : "")
+
         // constante é renderizada caso o expoente seja zero ou tenha expoente, mas que a constante seja menor que -1 ou maior que 1
         << (((aux->exp == 0) || (aux->exp != 0 && (aux->K < -1 || aux->K > 1))) ? to_string(aux->K) : "")
         
         // se o expoente for diferente de zero, X é renderizado
-        << ((aux->exp != 0) ? "X" : "")
+        << ((aux->exp != 0 && aux->K != 0) ? "X" : "")
         
         // se (o expoente for menor que 0 ou maior que 1) e o constante é diferente de 0, o simbolo ^ é renderizado junto ao expoente
         << (((aux->exp < 0 || aux->exp > 1) && aux->K != 0) ? "^" + std::to_string(aux->exp) : "")
         
         // Espaço para o proximo monomio e finalização do cout
-        << " ";
+        << ((aux->K != 0) ? " " : "");
 
         if (primeiroValor) primeiroValor = false;
         aux = aux->frontElo;
