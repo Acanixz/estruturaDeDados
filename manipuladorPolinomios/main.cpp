@@ -3,8 +3,8 @@
 // Estrutura de dados 2023
 
 // Histórico de desenvolvimento disponivel em:
-// https://github.com/Acanixz/manipuladorPolinomios
-// (apenas final da parte 1 e parte 2 é completo) 
+// https://github.com/Acanixz/estruturaDeDados
+// (apenas final da parte 1 e parte 2 é completo)
 // (publico apenas 1 semana após prazo de entrega)
 
 #include <iostream>
