@@ -74,14 +74,14 @@ No * rotacao_dupla_esquerda( No *k ){
 }
 
 No * rotacao_avl( No * k ){
-    if( buscar_altura(k->esq) > buscar_altura(k->dir) ){ // Rotação a direita
+    if( buscar_altura(k->esq) > buscar_altura(k->dir) ){ // RotaÃ§Ã£o a direita
         No * x = k->esq;
         if( buscar_altura(x->dir) > buscar_altura(x->esq) )
             return rotacao_dupla_direita(k);
         else
             return rotacao_simples_direita(k);
     }
-    else{ // Rotação a esquerda
+    else{ // RotaÃ§Ã£o a esquerda
         No * y = k->dir;
         if( buscar_altura(y->esq) > buscar_altura(y->dir) )
             return rotacao_dupla_esquerda(k);
@@ -202,7 +202,7 @@ int main(){
                     cont = altura(a);
                     cout << "A altura da arvore eh " << cont << " niveis" << endl;
                     break;
-            case 0 : // Somente para não dar msg de erro
+            case 0 : // Somente para nÃ£o dar msg de erro
                     break;
             default:
                     cout << "Erro: Opcao invalida!";
