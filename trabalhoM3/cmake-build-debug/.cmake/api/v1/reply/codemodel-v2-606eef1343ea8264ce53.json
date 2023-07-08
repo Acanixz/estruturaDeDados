@@ -1,0 +1,60 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.25"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "trabalhoM3_EstruturadeDados",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "trabalhoM3_EstruturadeDados::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-trabalhoM3_EstruturadeDados-Debug-eda44e26c0637bc530d0.json",
+					"name" : "trabalhoM3_EstruturadeDados",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Professional/Desktop/Projects/emProgresso/trabalhoM3-EstruturadeDados/cmake-build-debug",
+		"source" : "C:/Users/Professional/Desktop/Projects/emProgresso/trabalhoM3-EstruturadeDados"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}
